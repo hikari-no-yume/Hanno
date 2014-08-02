@@ -1,0 +1,8 @@
+{
+	"name": "ajf/Hanno",
+	"autoload": {
+		"psr-4": {
+			"ajf\\Hanno\\": "src"
+		}
+	}
+}
