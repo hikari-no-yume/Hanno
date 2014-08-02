@@ -4,5 +4,8 @@
 		"psr-4": {
 			"ajf\\Hanno\\": "src"
 		}
+	},
+	"require": {
+		"php": ">=5.5.0"
 	}
 }

@@ -30,24 +30,10 @@ In order to run multiple tasks at once, Hanno provides a `Reactor` class to hand
     $reactor = new Hanno\Reactor;
     $reactor->addTask(counter());
     $reactor->addTask(counter());
+    $reactor->run();
 ```
 
-For each step the reactor is run, it shall execute each task, run it for one iteration (i.e. call its `->next()` method), and if it is not finished (i.e., `->valid()` returns true), schedule it to be run next time. In order to run the reactor, we call `->run()` to get a task we can run, which we'll do manually:
-
-```php
-    $task = $reactor->run();
-    while ($task->valid()) {
-        $task->next();
-    }
-```
-
-To save you the bother, you don't need to implementing task running yourself. The `Utils` class provides a static method, `run`, that loops and runs a task until it finishes:
-
-```php
-    Hanno\Utils::run($reactor->run());
-```
-
-Note that because running a reactor creates a task, you can in fact run reactors as tasks in reactors! For example, we could do this:
+For each step the reactor is run, it shall execute each task, run it for one iteration (i.e. call its `->next()` method), and if it is not finished (i.e., `->valid()` returns true), schedule it to be run next time. Note that you can also run the reactor as a task, thus can in fact run reactors in reactors! For example, we could do this:
 
 ```php
     $reactor1 = new Hanno\Reactor;
@@ -58,8 +44,8 @@ Note that because running a reactor creates a task, you can in fact run reactors
     $reactor2->addTask(counter());
     
     $ueber_reactor = new Hanno\Reactor;
-    $ueber_reactor->addTask($reactor1);
-    $ueber_reactor->addTask($reactor2);
+    $ueber_reactor->addTask($reactor1->runAsTask());
+    $ueber_reactor->addTask($reactor2->runAsTask());
 ```
 
 However, you can't nest a reactor inside itself (Bad Things<sup>TM</sup> *will* happen), so don't try to. ;)
