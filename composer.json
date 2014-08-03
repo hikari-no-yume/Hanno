@@ -1,5 +1,5 @@
 {
-	"name": "ajf/Hanno",
+	"name": "ajf/hanno",
 	"autoload": {
 		"psr-4": {
 			"ajf\\Hanno\\": "src"
