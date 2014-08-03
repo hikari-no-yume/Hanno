@@ -1,11 +1,11 @@
 {
-	"name": "ajf/hanno",
-	"autoload": {
-		"psr-4": {
-			"ajf\\Hanno\\": "src"
-		}
-	},
-	"require": {
-		"php": ">=5.5.0"
-	}
+    "name": "ajf/hanno",
+    "autoload": {
+        "psr-4": {
+            "ajf\\Hanno\\": "src"
+        }
+    },
+    "require": {
+        "php": ">=5.5.0"
+    }
 }
