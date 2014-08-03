@@ -5,7 +5,7 @@ Hanno is an asynchronous event loop system for writing real-time applications in
 
 As it uses generators, it requires at least PHP 5.5.
 
-The name comes from the Japanese verb for to react, 反応する (*Han'nō suru*), a reference to the use of reactors and a nod to [ReactPHP](http://reactphp.org/). Because the Japanese word the name came from is pronounced *Han'nō*, you actually ought to pronounce "Hanno" with two separate 'n' sounds like "Han'no", but in practise everyone (including myself) is just going to say "Hanno" (/ˈhæ.no/).
+The name comes from the Japanese verb for to react, 反応する (*Han'nō suru*), a reference to the use of reactors and a nod to [ReactPHP](http://reactphp.org/). Because the Japanese word the name came from is pronounced *Han'nō*, you actually ought to pronounce "Hanno" with two separate 'n' sounds like "Han'no", but in practise everyone (including myself) is just going to say "Hanno" (/ˈhæ.noʊ/).
 
 How do I use it?
 ================
