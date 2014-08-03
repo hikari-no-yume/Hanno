@@ -1,11 +1,23 @@
 {
     "name": "ajf/hanno",
+    "type": "library",
+    "description": "Asynchronous I/O with generators for PHP 5.5",
+    "keywords": ["async", "asynchronous", "generators", "io"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andrea Faulds",
+            "email": "ajf@ajf.me",
+            "homepage": "http://ajf.me/",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.0"
+    },
     "autoload": {
         "psr-4": {
             "ajf\\Hanno\\": "src"
         }
-    },
-    "require": {
-        "php": ">=5.5.0"
     }
 }
