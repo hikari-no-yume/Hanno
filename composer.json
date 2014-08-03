@@ -3,6 +3,7 @@
     "type": "library",
     "description": "Asynchronous I/O with generators for PHP 5.5",
     "keywords": ["async", "asynchronous", "generators", "io"],
+    "homepage": "http://github.com/TazeTSchnitzel/Hanno",
     "license": "MIT",
     "authors": [
         {
