@@ -42,12 +42,12 @@ class Awaitable
         return $this->task;
     }
     
-    public function finish()
+    public function finish($obj)
     {
         $this->assertNotFinished();
         while (!$this->listeners->isEmpty()) {
             $listener = $this->listeners->dequeue();
-            $listener();
+            $listener($obj);
         }
         $this->finished = true;
     }

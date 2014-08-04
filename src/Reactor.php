@@ -8,15 +8,17 @@ use \SplQueue as Queue;
 class Reactor
 {
     private $tasks;
+    private $toQueue;
     
     public function __construct()
     {
         $this->tasks = new Queue();
+        $this->toQueue = new Queue();
     }
     
-    public function addTask(\Iterator $task)
+    public function addTask(\Generator $task, $obj = NULL)
     {
-        $this->tasks->enqueue($task);
+        $this->toQueue->enqueue(($obj !== NULL) ? [$task, $obj] : $task);
     }
     
     public function run()
@@ -29,14 +31,19 @@ class Reactor
     
     public function runAsTask()
     {
-        while (!$this->tasks->isEmpty()) {
-            $toQueue = new Queue();
-            
+        while (!$this->tasks->isEmpty() || !$this->toQueue->isEmpty()) {
             yield;
             
             while (!$this->tasks->isEmpty()) {
                 $task = $this->tasks->dequeue();
-                $task->next();
+                /* Tasks are sometimes of [$task, $value] format */
+                if (is_array($task)) {
+                    $pass_value = $task[1];
+                    $task = $task[0];
+                    $task->send($pass_value);
+                } else {
+                    $task->next();
+                }
                 $return_value = $task->current();
                 $key = $task->key();
                 
@@ -45,8 +52,8 @@ class Reactor
                     if (!($return_value instanceof Awaitable)) {
                         throw new \Exception("Special task key \"until\" must take an Awaitable as value");
                     }
-                    $return_value->addListener(function () use ($task) {
-                        $this->addTask($task);
+                    $return_value->addListener(function ($obj = NULL) use ($task) {
+                        $this->addTask($task, $obj);
                     });
                     /* Awaitables can provide an optional task to be scheduled */
                     if ($newTask = $return_value->getTask()) {
@@ -58,14 +65,14 @@ class Reactor
                 } else {
                     /* Task hasn't yet finished, we'll requeue it */
                     if ($task->valid()) {
-                        $toQueue->enqueue($task);
+                        $this->toQueue->enqueue($task);
                     }
                 }
             }
             
             /* we requeue things separately so previous loop isn't infinite */
-            while (!$toQueue->isEmpty()) {
-                $this->tasks->enqueue($toQueue->dequeue());
+            while (!$this->toQueue->isEmpty()) {
+                $this->tasks->enqueue($this->toQueue->dequeue());
             }
         }
     }
