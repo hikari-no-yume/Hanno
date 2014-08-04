@@ -29,7 +29,7 @@ class Awaitable
         $this->listeners->enqueue($listener);
     }
     
-    public function setTask(\Iterator $task)
+    public function setTask(\Generator $task)
     {
         if ($this->task) {
             throw new \Exception("Cannot set a task if Awaitable already has one");
