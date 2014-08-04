@@ -12,7 +12,7 @@ How do I use it?
 
 Hanno is a modern, autoloaded library that supports Composer and is available via Packagist. Thus, simply require the `"ajf\Hanno"` package and you're good to go.
 
-Hanno's basic structural piece is a *task*. Tasks in Hanno are simply plain `Iterator`s which are iterated over until they complete. Typically, a generator is used to implement a task. The idea behind this is that you use `yield` to yield control to other tasks when you need to wait for something else, meaning you can efficiently do multiple things at once (handle multiple requests for example), without each getting in eachother's way and without needing multiple threads. To take a rather trivial example, the following generator produces a fairly useless task:
+Hanno's basic structural piece is a *task*. Tasks in Hanno are simply plain `Generator`s which are iterated over until they complete. The idea behind this is that you use `yield` to yield control to other tasks when you need to wait for something else, meaning you can efficiently do multiple things at once (handle multiple requests for example), without each getting in eachother's way and without needing multiple threads. To take a rather trivial example, the following generator produces a fairly useless task:
 
 ```php
 function counter() {
@@ -48,4 +48,35 @@ $ueber_reactor->addTask($reactor1->runAsTask());
 $ueber_reactor->addTask($reactor2->runAsTask());
 ```
 
-However, you can't nest a reactor inside itself (Bad Things<sup>TM</sup> *will* happen), so don't try to. ;)
+You can nest a reactor inside itself, but Bad Things<sup>TM</sup> *will* happen, so don't try to. ;)
+
+So, now we're familiar with the basics of tasks and reactors. But what if we want to do something actually useful? Reactors don't ignore the values yielded by `yield`. By using the special key `'until'`, you can ask a reactor to suspend your task until something is done, and get back the result of that task. That something must be an `Awaitable` class. For example:
+
+```php
+function myTask($myAwaitable) {
+    yield;
+    
+    $result = (yield 'until' => $myAwaitable);
+    foobar($result);
+}
+```
+
+But where can you get an awaitable from? Well, an awaitable is typically returned from a function which does something. It's a very simple object containing a task that the reactor will run, and which the reactor can 'listen' to to know when the job is done and what its result was so your task can start running again. One place you can get awaitables from is Hanno's built-in `Stream` class, which wraps PHP streams. Let's say we want to find out our IP address. We could use the http://ip.jsontest.com/ API like this:
+
+```php
+function getIPTask() {
+    yield;
+    
+    $stream = new Hanno\Stream("http://ip.jsontest.com/", "r");
+    $data = (yield 'until' => $stream->read());
+    $data = json_decode($data);
+    var_dump($data->ip);
+}
+$reactor = new Hanno\Reactor;
+$reactor->addTask(getIPTask());
+$reactor->run();
+```
+
+The constructor takes either a pre-existing resource, or a URL and a mode (like you'd give to fopen). Calling the `->read` method with no argument will read all of the stream and give us an awaitable that'll ultimately result in a string. Then we just `json_decode`.
+
+And that was the basics of Hanno. Have fun!
